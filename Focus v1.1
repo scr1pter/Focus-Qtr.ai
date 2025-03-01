@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus</title>
+    <style>
+        /* Original CSS */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(160deg, #0b0b0b 0%, #000 100%);
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        h1 {
+            margin: 0 0 40px 0;
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: -0.5px;
+        }
+
+        .clock-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 28px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .clock {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            background: rgba(26, 26, 61, 0.6);
+            border-radius: 50%;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .clock:hover {
+            transform: scale(1.02);
+        }
+
+        .clock span {
+            position: absolute;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            width: 24px;
+            height: 24px;
+            transform-origin: center;
+            transition: all 0.2s ease;
+        }
+
+        .number-12 { transform: rotate(270deg) translateX(50px) rotate(-270deg); }
+        .number-1 { transform: rotate(300deg) translateX(50px) rotate(-300deg); }
+        .number-2 { transform: rotate(330deg) translateX(50px) rotate(-330deg); }
+        .number-3 { transform: rotate(0deg) translateX(50px) rotate(0deg); }
+        .number-4 { transform: rotate(30deg) translateX(50px) rotate(-30deg); }
+        .number-5 { transform: rotate(60deg) translateX(50px) rotate(-60deg); }
+        .number-6 { transform: rotate(90deg) translateX(50px) rotate(-90deg); }
+        .number-7 { transform: rotate(120deg) translateX(50px) rotate(-120deg); }
+        .number-8 { transform: rotate(150deg) translateX(50px) rotate(-150deg); }
+        .number-9 { transform: rotate(180deg) translateX(50px) rotate(-180deg); }
+        .number-10 { transform: rotate(210deg) translateX(50px) rotate(-210deg); }
+        .number-11 { transform: rotate(240deg) translateX(50px) rotate(-240deg); }
+
+        .hand {
+            position: absolute;
+            width: 50%;
+            height: 4px;
+            background: #fff;
+            transform-origin: 100%;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 4px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .hand.hour {
+            height: 6px;
+            width: 35%;
+            left: 15%;
+        }
+
+        .hand.minute {
+            height: 4px;
+            width: 45%;
+            left: 5%;
+        }
+
+        .digital-clock {
+            font-size: 3rem;
+            font-weight: 300;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px 40px;
+            border-radius: 18px;
+            backdrop-filter: blur(10px);
+            letter-spacing: -2px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .digital-clock:hover {
+            transform: scale(1.02);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .settings-and-controls {
+            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .settings label {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .settings input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-left: 10px;
+            width: 60px;
+            transition: all 0.2s ease;
+        }
+
+        .settings input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .controls button {
+            background: rgba(0, 122, 255, 0.9);
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .controls button:hover {
+            background: rgba(0, 122, 255, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+        }
+
+        .controls button:active {
+            transform: scale(0.98);
+        }
+
+        /* New Carousel Styles */
+        .carousel-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+            display: none;
+        }
+
+        .carousel-section {
+            height: 100vh;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .clock-preview {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .preset-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(0, 122, 255, 0.9);
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            z-index: 1001;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .option-title {
+            font-size: 2.5rem;
+            margin: 0 0 20px 0;
+            font-weight: 300;
+        }
+
+        .option-description {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 400px;
+            line-height: 1.6;
+            margin: 0 0 30px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Preset Timer Overlay -->
+    <div class="carousel-container" id="carousel">
+        <div class="carousel-section" data-duration="5">
+            <div class="clock-preview">
+                <div class="hand hour" style="transform: rotate(90deg); width: 35%; left: 15%; height: 6px;"></div>
+                <div class="hand minute" style="transform: rotate(180deg); width: 45%; left: 5%; height: 4px;"></div>
+            </div>
+            <h2 class="option-title">5 Minutes</h2>
+            <p class="option-description">
+                Perfect for quick tasks that need immediate attention. 
+                This short burst of focused work helps maintain high 
+                intensity and prevents burnout during long work sessions.
+            </p>
+            <button class="controls__button" onclick="selectPreset(5)">Use This Preset</button>
+        </div>
+
+        <div class="carousel-section" data-duration="10">
+            <div class="clock-preview">
+                <div class="hand hour" style="transform: rotate(120deg); width: 35%; left: 15%; height: 6px;"></div>
+                <div class="hand minute" style="transform: rotate(240deg); width: 45%; left: 5%; height: 4px;"></div>
+            </div>
+            <h2 class="option-title">10 Minutes</h2>
+            <p class="option-description">
+                Ideal for moderate tasks requiring sustained focus. 
+                This duration balances concentration and flexibility, 
+                allowing you to make progress without feeling rushed.
+            </p>
+            <button class="controls__button" onclick="selectPreset(10)">Use This Preset</button>
+        </div>
+
+        <div class="carousel-section" data-duration="25">
+            <div class="clock-preview">
+                <div class="hand hour" style="transform: rotate(150deg); width: 35%; left: 15%; height: 6px;"></div>
+                <div class="hand minute" style="transform: rotate(300deg); width: 45%; left: 5%; height: 4px;"></div>
+            </div>
+            <h2 class="option-title">25 Minutes</h2>
+            <p class="option-description">
+                The classic Pomodoro technique duration. Proven to 
+                maximize productivity through focused work sessions 
+                followed by short breaks. Ideal for deep work sessions.
+            </p>
+            <button class="controls__button" onclick="selectPreset(25)">Use This Preset</button>
+        </div>
+    </div>
+
+    <!-- Main Interface -->
+    <button class="preset-button" onclick="toggleCarousel()">Preset Timers</button>
+    
+    <h1>Focus</h1>
+
+    <div class="clock-container">
+        <div class="clock">
+            <span class="number-1">1</span>
+            <span class="number-2">2</span>
+            <span class="number-3">3</span>
+            <span class="number-4">4</span>
+            <span class="number-5">5</span>
+            <span class="number-6">6</span>
+            <span class="number-7">7</span>
+            <span class="number-8">8</span>
+            <span class="number-9">9</span>
+            <span class="number-10">10</span>
+            <span class="number-11">11</span>
+            <span class="number-12">12</span>
+            <div class="hand hour"></div>
+            <div class="hand minute"></div>
+        </div>
+
+        <div class="digital-clock" id="digitalClock">00:00</div>
+    </div>
+
+    <div class="settings-and-controls">
+        <div class="settings">
+            <label>Work Time (min): <input type="number" id="workTime" value="25"></label>
+            <label>Short Break (min): <input type="number" id="shortBreakTime" value="5"></label>
+            <label>Long Break (min): <input type="number" id="longBreakTime" value="15"></label>
+            <label>Sessions Before Long Break: <input type="number" id="sessionsBeforeLongBreak" value="4"></label>
+        </div>
+
+        <div class="controls">
+            <button onclick="startTimer()">Start</button>
+            <button onclick="pauseTimer()">Pause</button>
+            <button onclick="resetTimer()">Reset</button>
+        </div>
+    </div>
+
+    <script>
+        // Carousel functionality
+        const carousel = document.getElementById('carousel');
+        let touchStartY = 0;
+
+        function toggleCarousel() {
+            carousel.style.display = carousel.style.display === 'block' ? 'none' : 'block';
+        }
+
+        carousel.addEventListener('touchstart', e => {
+            touchStartY = e.touches[0].clientY;
+        });
+
+        carousel.addEventListener('touchend', e => {
+            const touchEndY = e.changedTouches[0].clientY;
+            const swipeDistance = touchStartY - touchEndY;
+            
+            if (Math.abs(swipeDistance) > 50) {
+                const currentSection = document.elementFromPoint(window.innerWidth/2, window.innerHeight/2);
+                const sections = Array.from(document.querySelectorAll('.carousel-section'));
+                const currentIndex = sections.indexOf(currentSection);
+                
+                if (swipeDistance > 0 && currentIndex < sections.length - 1) {
+                    sections[currentIndex + 1].scrollIntoView({ behavior: 'smooth' });
+                } else if (swipeDistance < 0 && currentIndex > 0) {
+                    sections[currentIndex - 1].scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        });
+
+        function selectPreset(minutes) {
+            setTimer(minutes);
+            toggleCarousel();
+            startTimer();
+        }
+
+        // Original Timer Logic
+        let timer;
+        let isRunning = false;
+        let isWorkTime = true;
+        let sessionCount = 0;
+        let timeLeft;
+
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => this.style.transform = 'scale(1)', 100);
+            });
+        });
+
+        function setTimer(minutes) {
+            timeLeft = minutes * 60;
+            updateClock();
+        }
+
+        function startTimer() {
+            if (!isRunning) {
+                const workTime = parseInt(document.getElementById("workTime").value) * 60;
+                const shortBreak = parseInt(document.getElementById("shortBreakTime").value) * 60;
+                const longBreak = parseInt(document.getElementById("longBreakTime").value) * 60;
+                const sessionLimit = parseInt(document.getElementById("sessionsBeforeLongBreak").value);
+
+                if (!timeLeft) {
+                    timeLeft = isWorkTime ? workTime : (sessionCount % sessionLimit === 0 ? longBreak : shortBreak);
+                }
+
+                isRunning = true;
+                timer = setInterval(() => {
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                        isRunning = false;
+                        isWorkTime = !isWorkTime;
+                        if (!isWorkTime) sessionCount++;
+                        timeLeft = null;
+                        startTimer();
+                    } else {
+                        timeLeft--;
+                        updateClock();
+                    }
+                }, 1000);
+            }
+        }
+
+        function pauseTimer() {
+            clearInterval(timer);
+            isRunning = false;
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            isRunning = false;
+            isWorkTime = true;
+            sessionCount = 0;
+            timeLeft = null;
+            updateClock();
+        }
+
+        function updateClock() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById("digitalClock").textContent = 
+                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            // Update analog clock hands based on timer
+            const totalMinutes = timeLeft / 60;
+            const hourRotation = ((totalMinutes / 60) * 360) / 12 - 90;
+            const minuteRotation = ((totalMinutes % 60) * 360) / 60 - 90;
+
+            document.querySelector('.hand.hour').style.transform = `rotate(${hourRotation}deg)`;
+            document.querySelector('.hand.minute').style.transform = `rotate(${minuteRotation}deg)`;
+        }
+    </script>
+</body>
+</html>
